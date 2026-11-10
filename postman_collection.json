@@ -1,0 +1,46 @@
+{
+  "info": {
+    "name": "Proxy Cache Lab5 Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "GET 200 (Cache Miss / http.cat)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/200"
+      }
+    },
+    {
+      "name": "GET 200 (Cache Hit)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/200"
+      }
+    },
+    {
+      "name": "DELETE 418",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/418"
+      }
+    },
+    {
+      "name": "GET Not Found Code",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/999"
+      }
+    }
+  ]
+}
