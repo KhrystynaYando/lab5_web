@@ -88,8 +88,23 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(201, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('Created/Updated in cache');
     } 
+    // Обробка методу DELETE
+    else if (req.method === 'DELETE') {
+      try {
+        await fs.unlink(filePath);
+        res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end('Deleted from cache');
+      } catch (unlinkErr) {
+        res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end('Image not found in cache');
+      }
+    } 
     else {
-      res.writeHead(405, { 'Content-Type': 'text/plain; charset=utf-8' });
+      // Будь-який інший метод — 405 Method Not Allowed + заголовок Allow
+      res.writeHead(405, {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Allow': 'GET, PUT, DELETE'
+      });
       res.end('Method Not Allowed');
     }
   } catch (serverErr) {
