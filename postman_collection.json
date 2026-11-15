@@ -9,6 +9,31 @@
   "item": [
     {
       "name": "GET 200 (Cache Miss)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Content-Type is image/jpeg\", function () {",
+              "    pm.response.to.have.header(\"Content-Type\", \"image/jpeg\");",
+              "});",
+              "",
+              "pm.test(\"Image source is valid\", function () {",
+              "    pm.expect([\"http.cat\", \"cache\"]).to.include(",
+              "        pm.response.headers.get(\"X-Cache-Source\")",
+              "    );",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
@@ -31,6 +56,29 @@
     },
     {
       "name": "GET 200 (Cache Hit)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Content-Type is image/jpeg\", function () {",
+              "    pm.response.to.have.header(\"Content-Type\", \"image/jpeg\");",
+              "});",
+              "",
+              "pm.test(\"Source is cache\", function () {",
+              "    pm.expect(pm.response.headers.get(\"X-Cache-Source\")).to.eql(\"cache\");",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
@@ -53,14 +101,37 @@
     },
     {
       "name": "PUT власної картинки",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201 Created\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test(\"Image successfully saved in cache\", function () {",
+              "    pm.expect(pm.response.text()).to.eql(\"Created/Updated in cache\");",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "PUT",
         "header": [],
         "body": {
-          "mode": "file",
-          "file": {
-            "src": "/Users/admin/lab5_web/image.jpg"
-          }
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "image",
+              "value": "/Users/admin/lab5_web/image.jpg",
+              "type": "text"
+            }
+          ]
         },
         "url": {
           "raw": "http://127.0.0.1:3000/418",
@@ -81,6 +152,29 @@
     },
     {
       "name": "GET після PUT",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Content-Type is image/jpeg\", function () {",
+              "    pm.response.to.have.header(\"Content-Type\", \"image/jpeg\");",
+              "});",
+              "",
+              "pm.test(\"Image comes from cache after PUT\", function () {",
+              "    pm.expect(pm.response.headers.get(\"X-Cache-Source\")).to.eql(\"cache\");",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
@@ -103,6 +197,21 @@
     },
     {
       "name": "DELETE 418",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "DELETE",
         "header": [],
@@ -125,6 +234,21 @@
     },
     {
       "name": "DELETE картинки, якої немає",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404 Not Found\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "DELETE",
         "header": [],
@@ -147,6 +271,21 @@
     },
     {
       "name": "GET неіснуючого коду",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404 Not Found\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
@@ -169,6 +308,25 @@
     },
     {
       "name": "Запит із недозволеним методом",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 405 Method Not Allowed\", function () {",
+              "    pm.response.to.have.status(405);",
+              "});",
+              "",
+              "pm.test(\"Allow header is correct\", function () {",
+              "    pm.expect(pm.response.headers.get(\"Allow\")).to.eql(\"GET, PUT, DELETE\");",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "POST",
         "header": [],
