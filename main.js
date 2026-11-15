@@ -19,13 +19,15 @@ const PORT = options.port;
 const CACHE_DIR = path.resolve(options.cache);
 
 // Допоміжна функція для отримання тіла запиту (для PUT) у вигляді Buffer через проміси
+
 async function parseRequestBody(req) {
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    req.on('data', (chunk) => chunks.push(chunk));
-    req.on('end', () => resolve(Buffer.concat(chunks)));
-    req.on('error', (err) => reject(err));
-  });
+  const chunks = [];
+
+  for await (const chunk of req) {
+    chunks.push(chunk);
+  }
+
+  return Buffer.concat(chunks);
 }
 
 // 2. Створення HTTP-сервера
@@ -58,8 +60,12 @@ const server = http.createServer(async (req, res) => {
         });
         res.end(cachedData);
       } catch (err) {
-        try {
-          const response = await superagent.get(`https://http.cat/${code}`).responseType('blob');
+  if (err.code !== 'ENOENT') {
+    throw err;
+  }
+
+  try {
+    const response = await superagent.get(`https://http.cat/${code}`).responseType('blob');
           const imageBuffer = response.body;
 
           await fs.writeFile(filePath, imageBuffer);
